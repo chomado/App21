@@ -26,5 +26,11 @@ namespace App21
         {
             this.InitializeComponent();
         }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            var sakeName = this.textBox.Text;
+            this.listView.Items.Add(sakeName);
+        }
     }
 }
