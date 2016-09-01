@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -96,10 +99,21 @@ namespace App21
         /// </summary>
         /// <param name="sender">中断要求の送信元。</param>
         /// <param name="e">中断要求の詳細。</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: アプリケーションの状態を保存してバックグラウンドの動作があれば停止します
+
+            StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync("sakedata", CreationCollisionOption.ReplaceExisting); 
+            Stream ws = await file.OpenStreamForWriteAsync(); 
+            if (ws != null)
+            {
+                DataContractSerializer sl = new DataContractSerializer(typeof(ObservableCollection<string>)); 
+                sl.WriteObject(ws, MainPage.SakeCollection); 
+                await ws.FlushAsync(); 
+                ws.Dispose();
+            }
+
             deferral.Complete();
         }
     }
