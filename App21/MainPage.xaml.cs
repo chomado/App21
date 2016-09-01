@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,20 +23,33 @@ namespace App21
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        // 酒のデータを格納する配列
+        ObservableCollection<string> SakeCollection = new ObservableCollection<string>();
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            // UI (ListView) と データの配列を、ひも付け
+            this.listView.ItemsSource = SakeCollection;
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
             var sakeName = this.textBox.Text;
-            this.listView.Items.Add(sakeName);
+            //this.listView.Items.Add(sakeName);
+            SakeCollection.Add(sakeName);
         }
 
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.listView.Items.Remove(this.listView.SelectedItem);
+            //this.listView.Items.Remove(this.listView.SelectedItem);
+
+            if (this.listView.SelectedIndex > -1) // -1になるのは、消した瞬間と、ListView が新しく作られた時
+            {
+                // ユーザの選択したアイテム(酒)を、データ配列から消す
+                this.SakeCollection.RemoveAt(this.listView.SelectedIndex);
+            }
         }
     }
 }
