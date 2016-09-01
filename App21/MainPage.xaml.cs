@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -31,7 +33,21 @@ namespace App21
             this.InitializeComponent();
 
             // UI (ListView) と データの配列を、ひも付け
-            this.listView.ItemsSource = SakeCollection;
+            //this.listView.ItemsSource = SakeCollection;
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            //データをファイルから読み込む処理
+            Stream rs = await ApplicationData.Current.LocalFolder.OpenStreamForReadAsync("sakedata");
+            if (rs != null)
+            {
+                DataContractSerializer sl = new DataContractSerializer(typeof(ObservableCollection<string>));
+                SakeCollection = (ObservableCollection<string>)sl.ReadObject(rs);
+            }
+            listView.ItemsSource = SakeCollection;
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
