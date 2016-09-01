@@ -32,5 +32,10 @@ namespace App21
             var sakeName = this.textBox.Text;
             this.listView.Items.Add(sakeName);
         }
+
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.listView.Items.Remove(this.listView.SelectedItem);
+        }
     }
 }
